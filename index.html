@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minhas Tarefas Psicodélicas</title>
+<style>
+  @keyframes bgShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes spinHue {
+    from { filter: hue-rotate(0deg); }
+    to   { filter: hue-rotate(360deg); }
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-1deg); }
+    50%      { transform: rotate(1deg); }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff; }
+    50%      { box-shadow: 0 0 25px #ffff00, 0 0 40px #ff0080; }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+    padding: 30px 20px;
+    background: linear-gradient(60deg,
+      #ff0080, #ff8c00, #ffee00, #00ff88, #00d4ff, #8a2be2, #ff0080);
+    background-size: 400% 400%;
+    animation: bgShift 12s ease infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    text-shadow:
+      2px 2px 0 #ff00ff,
+      -2px -2px 0 #00ffff,
+      0 0 15px #fff;
+    animation: wiggle 1.5s ease-in-out infinite, spinHue 8s linear infinite;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+  }
+
+  .card {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    padding: 25px;
+    max-width: 480px;
+    width: 100%;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  #taskInput {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 30px;
+    width: 70%;
+    font-size: 1rem;
+    outline: none;
+    background: #fff;
+    color: #1a002a;
+    box-shadow: inset 0 0 0 3px #ff00ff;
+  }
+
+  #taskInput::placeholder {
+    color: #8a2be2;
+  }
+
+  #addBtn {
+    padding: 10px 18px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(45deg, #ff0080, #ff8c00);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 128, 0.7);
+  }
+
+  #addBtn:hover {
+    transform: scale(1.08) rotate(-2deg);
+    filter: brightness(1.2);
+  }
+
+  #addBtn:active {
+    transform: scale(0.95);
+  }
+
+  .filters {
+    margin-top: 18px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .filter-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #1a002a;
+    background: linear-gradient(45deg, #00ffe0, #00aaff);
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+
+  .filter-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .filter-btn.active {
+    background: linear-gradient(45deg, #ff00ff, #8a2be2);
+    color: #fff;
+    box-shadow: 0 0 12px #ff00ff;
+  }
+
+  #taskList {
+    margin-top: 22px;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #taskList li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(90deg, #ffee00, #ff8c00, #ff00ff, #00ffe0);
+    background-size: 300% 100%;
+    animation: bgShift 6s linear infinite;
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: #1a002a;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  #taskList li.concluida span {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  #taskList li input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #8a2be2;
+    cursor: pointer;
+  }
+
+  #taskList li span {
+    flex: 1;
+  }
+
+  #taskList li button {
+    border: none;
+    background: #1a002a;
+    color: #ff0080;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  #taskList li button:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: #ff0080;
+    color: #1a002a;
+  }
+</style>
+</head>
+<body>
+
+<h1>Minhas Tarefas</h1>
+
+<div class="card">
+  <!-- Área de entrada da tarefa -->
+  <input
+    type="text"
+    id="taskInput"
+    placeholder="Digite uma tarefa..."
+  >
+
+  <!-- Botão que dispara a adição da tarefa -->
+  <button id="addBtn">Adicionar</button>
+
+  <!-- Botões de filtro -->
+  <div class="filters">
+    <!-- data-filter guarda qual filtro esse botão representa -->
+    <button class="filter-btn active" data-filter="todas">Todas</button>
+    <button class="filter-btn" data-filter="ativas">Ativas</button>
+    <button class="filter-btn" data-filter="concluidas">Concluídas</button>
+  </div>
+
+  <!-- Lista onde as tarefas serão inseridas dinamicamente -->
+  <ul id="taskList"></ul>
+</div>
+
+<script>
+// ================================
+// 1️ ESTRUTURA DE DADOS
+// ================================
+
+// Array que armazena todas as tarefas
+// Cada tarefa será um objeto { id, texto, concluida }
+let tarefas = [];
+
+
+// ================================
+// 2️ SELEÇÃO DE ELEMENTOS DO DOM
+// ================================
+
+// Input onde o usuário digita a tarefa
+const taskInput = document.getElementById('taskInput');
+
+// Botão de adicionar tarefa
+const addBtn = document.getElementById('addBtn');
+
+// Lista <ul> onde as tarefas aparecerão
+const taskList = document.getElementById('taskList');
+
+// Todos os botões de filtro
+const filterBtns = document.querySelectorAll('.filter-btn');
+
+
+// ================================
+// 3️ CONTROLE DE ESTADO
+// ================================
+
+// Guarda qual filtro está ativo no momento
+let filtroAtual = 'todas';
+
+
+// ================================
+// 4️ FUNÇÃO: ADICIONAR TAREFA
+// ================================
+
+function adicionarTarefa() {
+  // Pegamos o texto digitado e removemos espaços inúteis
+  const texto = taskInput.value.trim();
+
+  // Validação: não permitir tarefa vazia
+  if (texto === '') {
+    return;
+  }
+
+  // Criamos um novo objeto de tarefa
+  const novaTarefa = {
+    id: Date.now(),      // ID único baseado no tempo
+    texto: texto,        // Texto digitado
+    concluida: false     // Começa como não concluída
+  };
+
+  // Adicionamos a tarefa ao array
+  tarefas.push(novaTarefa);
+
+  // Limpamos o input após adicionar
+  taskInput.value = '';
+
+  // Atualizamos a interface
+  renderizarTarefas();
+}
+
+
+// ================================
+// 5️ FUNÇÃO: RENDERIZAR TAREFAS
+// ================================
+
+function renderizarTarefas() {
+  // Limpamos a lista antes de renderizar novamente
+  taskList.innerHTML = '';
+
+  // Aplicamos o filtro conforme o estado atual
+  let tarefasFiltradas = tarefas;
+
+  if (filtroAtual === 'ativas') {
+    tarefasFiltradas = tarefas.filter(t => !t.concluida);
+  }
+
+  if (filtroAtual === 'concluidas') {
+    tarefasFiltradas = tarefas.filter(t => t.concluida);
+  }
+
+  // Para cada tarefa filtrada, criamos o HTML
+  tarefasFiltradas.forEach(tarefa => {
+    // Criamos o <li>
+    const li = document.createElement('li');
+
+    // Classe base do item
+    li.classList.add('task-item');
+
+    // Se estiver concluída, adicionamos a classe visual
+    if (tarefa.concluida) {
+      li.classList.add('concluida');
+    }
+
+    // Checkbox para marcar como concluída
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = tarefa.concluida;
+
+    // Ao clicar no checkbox, alterna o estado da tarefa
+    checkbox.addEventListener('click', () => {
+      toggleConcluida(tarefa.id);
+    });
+
+    // Texto da tarefa
+    const span = document.createElement('span');
+    span.textContent = tarefa.texto;
+
+    // Botão de remover
+    const btnRemover = document.createElement('button');
+    btnRemover.textContent = 'X';
+
+    btnRemover.addEventListener('click', () => {
+      removerTarefa(tarefa.id);
+    });
+
+    // Montamos o <li>
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(btnRemover);
+
+    // Inserimos na lista
+    taskList.appendChild(li);
+  });
+}
+
+
+// ================================
+// 6️ FUNÇÃO: REMOVER TAREFA
+// ================================
+
+function removerTarefa(id) {
+  // Criamos um novo array sem a tarefa removida
+  tarefas = tarefas.filter(tarefa => tarefa.id !== id);
+
+  // Atualizamos a interface
+  renderizarTarefas();
+}
+
+
+// ================================
+// 7 FUNÇÃO: TOGGLE CONCLUÍDA
+// ================================
+
+function toggleConcluida(id) {
+  // Localizamos a tarefa pelo ID
+  const tarefa = tarefas.find(t => t.id === id);
+
+  // Alternamos o estado
+  tarefa.concluida = !tarefa.concluida;
+
+  // Atualizamos a interface
+  renderizarTarefas();
+}
+
+
+// ================================
+// 8️ EVENT LISTENERS
+// ================================
+
+// Clique no botão adicionar
+addBtn.addEventListener('click', adicionarTarefa);
+
+// Tecla Enter adiciona tarefa
+taskInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    adicionarTarefa();
+  }
+});
+
+// Clique nos botões de filtro
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Atualizamos o filtro atual
+    filtroAtual = btn.dataset.filter;
+
+    // Atualizamos o botão ativo visualmente
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Re-renderizamos a lista
+    renderizarTarefas();
+  });
+});
+</script>
+
+</body>
+</html>
