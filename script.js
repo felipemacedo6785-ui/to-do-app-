@@ -1,13 +1,11 @@
-// ================================
+
 // 1. ESTRUTURA DE DADOS
-// ================================
 
 let tarefas = [];
 
 
-// ================================
+
 // 2. SELEÇÃO DE ELEMENTOS DO DOM
-// ================================
 
 const taskInput  = document.getElementById('taskInput');
 const addBtn     = document.getElementById('addBtn');
@@ -15,9 +13,9 @@ const taskList   = document.getElementById('taskList');
 const filterBtns = document.querySelectorAll('.filter-btn');
 
 
-// ================================
+
 // 3. CONTROLE DE ESTADO
-// ================================
+
 
 let filtroAtual = 'todas';
 
@@ -43,9 +41,9 @@ function adicionarTarefa() {
 }
 
 
-// ================================
+
 // 5. FUNÇÃO: RENDERIZAR TAREFAS
-// ================================
+
 
 function renderizarTarefas() {
   taskList.innerHTML = '';
@@ -82,9 +80,9 @@ function renderizarTarefas() {
 }
 
 
-// ================================
+
 // 6. FUNÇÃO: REMOVER TAREFA
-// ================================
+
 
 function removerTarefa(id) {
   tarefas = tarefas.filter(tarefa => tarefa.id !== id);
@@ -92,9 +90,9 @@ function removerTarefa(id) {
 }
 
 
-// ================================
+
 // 7. FUNÇÃO: TOGGLE CONCLUÍDA
-// ================================
+
 
 function toggleConcluida(id) {
   const tarefa = tarefas.find(t => t.id === id);
@@ -103,9 +101,9 @@ function toggleConcluida(id) {
 }
 
 
-// ================================
+
 // 8. EVENT LISTENERS
-// ================================
+
 
 addBtn.addEventListener('click', adicionarTarefa);
 
